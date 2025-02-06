@@ -22,7 +22,7 @@ class Client:
 
     def generate_request(self, request_type, file_name) -> str:
 
-        payload = (f"{request_type}/{file_name}").encode("utf-8")
+        payload = (f"{request_type}/{file_name}")
         return payload
 
     def request_file(self):
@@ -36,9 +36,9 @@ class Client:
 
         try:
             first_req = True
-            feedback = self.client_socket.rec(CLIENT_BUFFER_SIZE).decode('utf-8")
+            feedback = self.client_socket.recv(CLIENT_BUFFER_SIZE).decode('utf-8')
             logging.info(f'received data: {feedback}')
-            received_filename = filename.replace('txt', '_received.txt')
+            received_filename = file_name.replace('txt', '_received.txt')
 
             with open(received_filename, 'wb') as file:
                 last_packet = b''
@@ -55,7 +55,8 @@ class Client:
                         return
 
                     message  = data.decode('utf-8').split('/')
-                    content  = message[0].decode('utf-8')
+                    print(message)
+                    content  = message[0].encode('utf-8')
                     checksum = message[1]
 
                     if verify_checksum(content, checksum):
@@ -79,7 +80,7 @@ class Client:
         content = self.client_socket.recv(CLIENT_BUFFER_SIZE)
         logging.info(content.decode())
         payload = input('Insert payload:')
-        message = f'Sending -> {payload}')
+        message = f'Sending -> {payload}'
         self.client_socket.send(message.encode())
         while True:
             try:
@@ -95,7 +96,7 @@ class Client:
                     break
                 logging.info(content.decode())
                 payload = input('Insert payload:')
-                message = f'Sending -> {payload}')
+                message = f'Sending -> {payload}'
                 self.client_socket.send(message.encode())
             except ConnectionError:
                 logging.info('Connection lost')
@@ -104,7 +105,7 @@ class Client:
 
 
 
-    def startup_selections(self) -> dict:
+    def startup_selections(self):
         logging.info(
             """Select desired mode by choosing one of the following numbers
     arquivo: 1,
@@ -113,20 +114,17 @@ class Client:
         )
         file_option = input()
 
-        match file_option:
-            case "1":
-                self.request_file()
-            case "2":
-                self.chat()
-            case _:
-                self.client_socket.close()
-
-        return {"integrity": integrity}
+        if file_option ==  "1": 
+            self.request_file()
+        elif file_option == "2":
+            self.chat()
+        else:
+            self.client_socket.close()
 
 
     def run_client(self) -> None:
 
-        user_input = self.startup_selections()
+        self.startup_selections()
 
         
 

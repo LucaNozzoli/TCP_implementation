@@ -75,6 +75,7 @@ class Server:
                 content = connection.recv(SERVER_BUFFER_SIZE)
                 if content:
                     message = content.decode().strip()
+                    logging.info(f'Client ({address}) -> {message}')
 
                     if message.lower() = 'chat: exit':
                         connection.send('Chat mode closed')
@@ -101,22 +102,23 @@ class Server:
     def connection_handler(self, connection, address):
         while True:
             content = connection.recv(BUFFER_SIZE)
-            if not content: break
+            if not content:
+                break
             message = content.decode()
             if message.lower() == "exit":
-                print ( f"SERVER INFO: CLIENT {address} REQUESTING TO CLOSE THE CONNECTION")
-                connection.send(b"SERVER INFO: CLIENT REQUESTING TO CLOSE THE CONNECTION")
+                logging.info( f"Client closed connection")
+                connection.send(b"Client closed connection")
                 break
             elif message.lower() == "file":
                 send_file(connection=connection, address=address)
                 break
             elif message.lower() == "chat":
-                handle_chat(connection=connection, address=address)
+                chat(connection=connection, address=address)
                 break
             else:
-                print(data.decode())
-                print ("SERVER ERROR: CLIENT COMMAND IS INVALID, CLOSING THE CONNECTION IMMEDIATLY!")
-                connection.send(b"SERVER ERROR: CLIENT COMMAND IS INVALID, CLOSING THE CONNECTION IMMEDIATLY!")
+                logging.info(data.decode())
+                logging.info ("Invalid command: closing connection")
+                connection.send(b"Invalid command: closing connection")
                 break
 
         connection.close()
