@@ -38,7 +38,7 @@ class Client:
             first_req = True
             feedback = self.client_socket.recv(CLIENT_BUFFER_SIZE).decode('utf-8')
             logging.info(f'received data: {feedback}')
-            received_filename = file_name.replace('txt', '_received.txt')
+            received_filename = file_name.replace('.txt', '_received.txt')
 
             with open(received_filename, 'wb') as file:
                 last_packet = b''
@@ -113,6 +113,8 @@ class Client:
     close: 0""",
         )
         file_option = input()
+
+        self.client_socket.send(file_option.encode('utf-8'))
 
         if file_option ==  "1": 
             self.request_file()
