@@ -61,7 +61,7 @@ class Client:
                     if verify_checksum(content, checksum):
                         file.write(content)
                         logging.info('chunk received and checked')
-                        self.client_socket.send('ack')
+                        self.client_socket.send(b'ack')
                         last_packet = content
                     else:
                         logging.info('packet check failed. retransmitting')
@@ -87,8 +87,8 @@ class Client:
                 if not content:
                     logging.info('No response from server')
                     break
-                elif content == (b'Client offline'):
-                    logging.info('Client offline')
+                elif content == (b'Server offline'):
+                    logging.info('Server offline')
                     break
                 elif content == (b'Chat mode closed'):
                     logging.info('Chat mode closed')
